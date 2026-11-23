@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"e-learning-mobile-backend/models"
 
@@ -39,9 +40,18 @@ func Connect() {
 	)
 
 	var err error
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	// Retry connection to handle database startup delay in Docker
+	for i := 1; i <= 15; i++ {
+		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+		if err == nil {
+			break
+		}
+		log.Printf("⏳ Menunggu database MySQL siap (percobaan %d/15)...", i)
+		time.Sleep(2 * time.Second)
+	}
+
 	if err != nil {
 		log.Printf("⚠️ Gagal koneksi ke database MySQL (%s). Pastikan MySQL berjalan dan database '%s' sudah dibuat.\nError: %v", dsn, dbName, err)
 		return

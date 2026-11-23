@@ -1,4 +1,11 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const getOrigin = () => {
+  if (import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== '') {
+    return import.meta.env.VITE_API_URL;
+  }
+  return import.meta.env.DEV ? 'http://localhost:8080' : '';
+};
+
+const API_BASE = `${getOrigin()}/api`;
 
 export function getToken() {
   return localStorage.getItem('token') || '';

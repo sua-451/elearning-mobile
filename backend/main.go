@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"e-learning-mobile-backend/database"
 	"e-learning-mobile-backend/handlers"
@@ -65,6 +66,23 @@ func main() {
 		admin.POST("/lessons", handlers.AdminCreateLesson)
 		admin.PUT("/lessons/:id", handlers.AdminUpdateLesson)
 		admin.DELETE("/lessons/:id", handlers.AdminDeleteLesson)
+	}
+
+	// Serve Static Frontend (Single-Container Support)
+	staticDir := "./static"
+	if stat, err := os.Stat(staticDir); err == nil && stat.IsDir() {
+		log.Println("📦 Menemukan direktori ./static, mengaktifkan static file server & SPA fallback")
+		r.Static("/assets", "./static/assets")
+		r.StaticFile("/favicon.svg", "./static/favicon.svg")
+
+		r.NoRoute(func(c *gin.Context) {
+			path := c.Request.URL.Path
+			if strings.HasPrefix(path, "/api/") {
+				c.JSON(404, gin.H{"error": "API route not found"})
+				return
+			}
+			c.File("./static/index.html")
+		})
 	}
 
 	port := os.Getenv("PORT")

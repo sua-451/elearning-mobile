@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: mobileindex_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: elearning_mobile
+      MYSQL_USER: elearning
+      MYSQL_PASSWORD: elearningpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mobileindex_app
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      APP_URL: "http://localhost:8080"
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      DB_USER: "elearning"
+      DB_PASSWORD: "elearningpassword"
+      DB_NAME: "elearning_mobile"
+      JWT_SECRET: "supersecret-flutter-dart-learning-key-2026"
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+volumes:
+  db_data:
