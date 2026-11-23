@@ -66,6 +66,12 @@ func main() {
 		admin.POST("/lessons", handlers.AdminCreateLesson)
 		admin.PUT("/lessons/:id", handlers.AdminUpdateLesson)
 		admin.DELETE("/lessons/:id", handlers.AdminDeleteLesson)
+
+		// Admin User Management
+		admin.GET("/users", handlers.AdminGetUsers)
+		admin.POST("/users", handlers.AdminCreateUser)
+		admin.DELETE("/users/:id", handlers.AdminDeleteUser)
+		admin.PUT("/users/password", handlers.AdminChangePassword)
 	}
 
 	// Serve Static Frontend (Single-Container Support)

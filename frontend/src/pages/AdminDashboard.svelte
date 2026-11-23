@@ -19,13 +19,28 @@
     Image,
     Lightbulb,
     Code,
-    Check
+    Check,
+    Users,
+    KeyRound,
+    ShieldCheck
   } from 'lucide-svelte';
 
   let materials = [];
+  let users = [];
+  let currentUser = null;
   let loading = true;
   let error = '';
-  let activeTab = 'materials'; // 'materials' or 'lessons'
+  let activeTab = 'materials'; // 'materials', 'lessons', or 'admins'
+
+  // Admin Management state
+  let adminMessage = '';
+  let adminError = '';
+  let adminActionLoading = false;
+  let newAdminUsername = '';
+  let newAdminPassword = '';
+  let currentPassword = '';
+  let newPassword = '';
+  let confirmNewPassword = '';
 
   // Modal / Form state for Material
   let showMaterialModal = false;
@@ -69,7 +84,14 @@
     loading = true;
     error = '';
     try {
-      materials = await apiRequest('/materials');
+      const [mats, meData, usersData] = await Promise.all([
+        apiRequest('/materials'),
+        apiRequest('/admin/me').catch(() => null),
+        apiRequest('/admin/users').catch(() => [])
+      ]);
+      materials = mats;
+      currentUser = meData;
+      users = usersData;
     } catch (err) {
       error = err.message;
       if (err.message.includes('401') || err.message.includes('Token')) {
@@ -78,6 +100,94 @@
       }
     } finally {
       loading = false;
+    }
+  }
+
+  async function loadUsers() {
+    try {
+      users = await apiRequest('/admin/users');
+    } catch (err) {
+      adminError = err.message;
+    }
+  }
+
+  async function handleCreateAdmin() {
+    adminMessage = '';
+    adminError = '';
+    if (!newAdminUsername.trim() || !newAdminPassword) {
+      adminError = 'Username dan password wajib diisi';
+      return;
+    }
+    adminActionLoading = true;
+    try {
+      await apiRequest('/admin/users', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: newAdminUsername.trim(),
+          password: newAdminPassword
+        })
+      });
+      adminMessage = `Admin "${newAdminUsername}" berhasil ditambahkan!`;
+      newAdminUsername = '';
+      newAdminPassword = '';
+      await loadUsers();
+    } catch (err) {
+      adminError = err.message;
+    } finally {
+      adminActionLoading = false;
+    }
+  }
+
+  async function handleDeleteAdmin(userId, username) {
+    adminMessage = '';
+    adminError = '';
+    if (!confirm(`Yakin ingin menghapus akun admin "${username}"?`)) return;
+    adminActionLoading = true;
+    try {
+      await apiRequest(`/admin/users/${userId}`, {
+        method: 'DELETE'
+      });
+      adminMessage = `Admin "${username}" berhasil dihapus.`;
+      await loadUsers();
+    } catch (err) {
+      adminError = err.message;
+    } finally {
+      adminActionLoading = false;
+    }
+  }
+
+  async function handleChangePassword() {
+    adminMessage = '';
+    adminError = '';
+    if (!currentPassword || !newPassword) {
+      adminError = 'Password lama dan baru wajib diisi';
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      adminError = 'Konfirmasi password baru tidak cocok';
+      return;
+    }
+    if (newPassword.length < 5) {
+      adminError = 'Password baru minimal 5 karakter';
+      return;
+    }
+    adminActionLoading = true;
+    try {
+      await apiRequest('/admin/users/password', {
+        method: 'PUT',
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword
+        })
+      });
+      adminMessage = 'Kata sandi berhasil diperbarui!';
+      currentPassword = '';
+      newPassword = '';
+      confirmNewPassword = '';
+    } catch (err) {
+      adminError = err.message;
+    } finally {
+      adminActionLoading = false;
     }
   }
 
@@ -339,6 +449,13 @@
       <Layers class="w-4 h-4" />
       <span>Semua Bab Pembelajaran</span>
     </button>
+    <button 
+      on:click={() => activeTab = 'admins'}
+      class="inline-flex items-center gap-2 pb-3 text-sm font-semibold transition border-b-2 {activeTab === 'admins' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
+    >
+      <Users class="w-4 h-4" />
+      <span>Kelola Admin ({users.length})</span>
+    </button>
   </div>
 
   {#if loading}
@@ -496,6 +613,199 @@
             </table>
           </div>
         {/each}
+      </div>
+    {/if}
+
+    <!-- Tab 3: Admin Management -->
+    {#if activeTab === 'admins'}
+      <div class="space-y-6">
+        {#if adminMessage}
+          <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs rounded-xl flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <ShieldCheck class="w-4 h-4 text-emerald-600" />
+              <span>{adminMessage}</span>
+            </span>
+            <button on:click={() => adminMessage = ''} class="text-emerald-600 hover:text-emerald-800"><X class="w-3.5 h-3.5" /></button>
+          </div>
+        {/if}
+
+        {#if adminError}
+          <div class="p-3.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-xs rounded-xl flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <AlertCircle class="w-4 h-4 text-red-600" />
+              <span>{adminError}</span>
+            </span>
+            <button on:click={() => adminError = ''} class="text-red-600 hover:text-red-800"><X class="w-3.5 h-3.5" /></button>
+          </div>
+        {/if}
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Card: Tambah Admin Baru -->
+          <div class="bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div class="p-2 bg-sky-50 dark:bg-sky-950/50 rounded-lg text-[#0175C2]">
+                <Users class="w-4 h-4" />
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Tambah Akun Admin Baru</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Buat akun untuk pengelola materi lainnya</p>
+              </div>
+            </div>
+
+            <form on:submit|preventDefault={handleCreateAdmin} class="space-y-3">
+              <div>
+                <label for="new-admin-user" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Username</label>
+                <input 
+                  id="new-admin-user"
+                  type="text" 
+                  bind:value={newAdminUsername}
+                  placeholder="Contoh: amiya"
+                  required
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                />
+              </div>
+
+              <div>
+                <label for="new-admin-pass" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                <input 
+                  id="new-admin-pass"
+                  type="password" 
+                  bind:value={newAdminPassword}
+                  placeholder="Minimal 5 karakter"
+                  required
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={adminActionLoading}
+                class="w-full py-2 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-lg transition disabled:opacity-50 cursor-pointer"
+              >
+                {adminActionLoading ? 'Menyimpan...' : 'Tambah Admin'}
+              </button>
+            </form>
+          </div>
+
+          <!-- Card: Ganti Password Saya -->
+          <div class="bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div class="p-2 bg-amber-50 dark:bg-amber-950/50 rounded-lg text-amber-600">
+                <KeyRound class="w-4 h-4" />
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Ganti Password Saya</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                  Akun aktif: <strong class="text-slate-800 dark:text-slate-200">{currentUser?.username || 'Saya'}</strong>
+                </p>
+              </div>
+            </div>
+
+            <form on:submit|preventDefault={handleChangePassword} class="space-y-3">
+              <div>
+                <label for="curr-pass" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password Saat Ini</label>
+                <input 
+                  id="curr-pass"
+                  type="password" 
+                  bind:value={currentPassword}
+                  placeholder="Masukkan kata sandi lama"
+                  required
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="new-pass" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password Baru</label>
+                  <input 
+                    id="new-pass"
+                    type="password" 
+                    bind:value={newPassword}
+                    placeholder="Minimal 5 karakter"
+                    required
+                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                  />
+                </div>
+                <div>
+                  <label for="confirm-pass" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Ulangi Password Baru</label>
+                  <input 
+                    id="confirm-pass"
+                    type="password" 
+                    bind:value={confirmNewPassword}
+                    placeholder="Ulangi kata sandi baru"
+                    required
+                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                disabled={adminActionLoading}
+                class="w-full py-2 bg-slate-900 hover:bg-black dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition disabled:opacity-50 cursor-pointer"
+              >
+                {adminActionLoading ? 'Memproses...' : 'Simpan Password Baru'}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tabel Daftar Semua Akun Admin -->
+        <div class="bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <span class="font-bold text-xs text-slate-700 dark:text-slate-300">Daftar Admin Terdaftar</span>
+            <span class="text-xs text-slate-400">Total: {users.length} akun</span>
+          </div>
+
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
+              <tr>
+                <th class="p-3 w-16 text-center">ID</th>
+                <th class="p-3">Username</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              {#each users as u}
+                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+                  <td class="p-3 text-center font-mono text-xs text-slate-400">{u.id}</td>
+                  <td class="p-3 font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                    <span>{u.username}</span>
+                    {#if currentUser && currentUser.id === u.id}
+                      <span class="text-[10px] bg-sky-100 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 font-semibold px-2 py-0.5 rounded-full">
+                        Anda (Sedang Login)
+                      </span>
+                    {/if}
+                  </td>
+                  <td class="p-3 text-xs text-slate-500 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span>Aktif</span>
+                    </span>
+                  </td>
+                  <td class="p-3 text-right">
+                    {#if currentUser && currentUser.id === u.id}
+                      <span class="text-xs text-slate-400 italic">Akun aktif</span>
+                    {:else}
+                      <button 
+                        on:click={() => handleDeleteAdmin(u.id, u.username)}
+                        class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium cursor-pointer"
+                      >
+                        Hapus Admin
+                      </button>
+                    {/if}
+                  </td>
+                </tr>
+              {/each}
+              {#if users.length === 0}
+                <tr>
+                  <td colspan="4" class="p-4 text-center text-slate-400 text-xs">Belum ada akun admin lain.</td>
+                </tr>
+              {/if}
+            </tbody>
+          </table>
+        </div>
       </div>
     {/if}
   {/if}

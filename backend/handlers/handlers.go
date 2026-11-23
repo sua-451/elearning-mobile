@@ -300,3 +300,172 @@ func UploadImage(c *gin.Context) {
 		"filename": filename,
 	})
 }
+
+// --- ADMIN USER MANAGEMENT HANDLERS ---
+
+type CreateAdminRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type ChangePasswordRequest struct {
+	CurrentPassword string `json:"current_password" binding:"required"`
+	NewPassword     string `json:"new_password" binding:"required"`
+}
+
+// AdminGetUsers lists all admin users (without exposing hashed passwords)
+func AdminGetUsers(c *gin.Context) {
+	var users []models.User
+	if err := database.DB.Select("id, username, created_at, updated_at").Order("id asc").Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil daftar admin"})
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
+// AdminCreateUser creates a new admin user
+func AdminCreateUser(c *gin.Context) {
+	var req CreateAdminRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Username dan password wajib diisi"})
+		return
+	}
+
+	req.Username = strings.TrimSpace(req.Username)
+	if len(req.Username) < 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Username minimal 3 karakter"})
+		return
+	}
+	if len(req.Password) < 5 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password minimal 5 karakter"})
+		return
+	}
+
+	// Check if username already exists
+	var existing models.User
+	if err := database.DB.Where("username = ?", req.Username).First(&existing).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Username sudah digunakan"})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengenkripsi kata sandi"})
+		return
+	}
+
+	newUser := models.User{
+		Username: req.Username,
+		Password: string(hashedPassword),
+	}
+
+	if err := database.DB.Create(&newUser).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menambahkan admin baru"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Admin berhasil ditambahkan",
+		"user": gin.H{
+			"id":       newUser.ID,
+			"username": newUser.Username,
+		},
+	})
+}
+
+// AdminDeleteUser deletes an admin user by ID
+func AdminDeleteUser(c *gin.Context) {
+	idStr := c.Param("id")
+	targetID, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID admin tidak valid"})
+		return
+	}
+
+	currentUserIDVal, exists := c.Get("user_id")
+	if exists {
+		var currentID uint64
+		switch v := currentUserIDVal.(type) {
+		case uint:
+			currentID = uint64(v)
+		case float64:
+			currentID = uint64(v)
+		case int:
+			currentID = uint64(v)
+		case uint64:
+			currentID = v
+		}
+		if currentID == targetID {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Tidak dapat menghapus akun admin yang sedang aktif login"})
+			return
+		}
+	}
+
+	// Ensure there is at least one admin remaining
+	var totalUsers int64
+	database.DB.Model(&models.User{}).Count(&totalUsers)
+	if totalUsers <= 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tidak dapat menghapus satu-satunya akun admin"})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.First(&user, targetID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Admin tidak ditemukan"})
+		return
+	}
+
+	if err := database.DB.Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghapus admin"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Admin berhasil dihapus"})
+}
+
+// AdminChangePassword updates the password of the currently logged-in admin
+func AdminChangePassword(c *gin.Context) {
+	var req ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password lama dan password baru wajib diisi"})
+		return
+	}
+
+	if len(req.NewPassword) < 5 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password baru minimal 5 karakter"})
+		return
+	}
+
+	currentUserIDVal, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Sesi autentikasi tidak ditemukan"})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.First(&user, currentUserIDVal).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Pengguna tidak ditemukan"})
+		return
+	}
+
+	// Verify old password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password lama tidak sesuai"})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memproses kata sandi baru"})
+		return
+	}
+
+	user.Password = string(hashedPassword)
+	if err := database.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan password baru"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diperbarui"})
+}
+
