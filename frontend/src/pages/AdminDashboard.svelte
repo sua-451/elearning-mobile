@@ -29,10 +29,13 @@
     content: '',
     notes: '',
     starter_code: '',
+    blocks: '[]',
     enable_dartpad: true
   };
 
-  let imageUploading = false;
+  // Active blocks array in Lesson Editor
+  let blocks = [];
+  let uploadingBlockId = null;
 
   onMount(async () => {
     if (!getToken()) {
@@ -104,8 +107,71 @@
     }
   }
 
+  // --- Dynamic Block Builder Functions ---
+  function generateBlockId() {
+    return 'blk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+  }
+
+  function addBlock(type) {
+    let newBlock;
+    if (type === 'text') {
+      newBlock = { id: generateBlockId(), type: 'text', content: '' };
+    } else if (type === 'image') {
+      newBlock = { id: generateBlockId(), type: 'image', url: '', caption: '' };
+    } else if (type === 'note') {
+      newBlock = { id: generateBlockId(), type: 'note', content: '' };
+    } else if (type === 'code') {
+      newBlock = { id: generateBlockId(), type: 'code', title: 'Contoh Kode Dart', code: 'void main() {\n  print("Hello Dart!");\n}' };
+    }
+    if (newBlock) {
+      blocks = [...blocks, newBlock];
+    }
+  }
+
+  function removeBlock(index) {
+    blocks = blocks.filter((_, i) => i !== index);
+  }
+
+  function moveBlockUp(index) {
+    if (index === 0) return;
+    const temp = blocks[index];
+    blocks[index] = blocks[index - 1];
+    blocks[index - 1] = temp;
+    blocks = [...blocks];
+  }
+
+  function moveBlockDown(index) {
+    if (index === blocks.length - 1) return;
+    const temp = blocks[index];
+    blocks[index] = blocks[index + 1];
+    blocks[index + 1] = temp;
+    blocks = [...blocks];
+  }
+
+  async function handleBlockImageUpload(e, blockId) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    uploadingBlockId = blockId;
+    try {
+      const res = await uploadImage(file);
+      const bIndex = blocks.findIndex(b => b.id === blockId);
+      if (bIndex !== -1) {
+        blocks[bIndex].url = res.url;
+        blocks = [...blocks];
+      }
+    } catch (err) {
+      alert(err.message || 'Gagal mengupload gambar blok');
+    } finally {
+      uploadingBlockId = null;
+    }
+  }
+
   // --- Lesson CRUD ---
   function openCreateLesson(defaultMaterialId = null) {
+    blocks = [
+      { id: generateBlockId(), type: 'text', content: '### Judul Pengantar\n\nTuliskan penjelasan materi dalam format Markdown...' }
+    ];
     lessonForm = {
       id: null,
       material_id: defaultMaterialId || (materials[0] ? materials[0].id : null),
@@ -116,6 +182,7 @@
       content: '',
       notes: '',
       starter_code: 'void main() {\n  print("Hello Dart!");\n}',
+      blocks: JSON.stringify(blocks),
       enable_dartpad: true
     };
     showLessonModal = true;
@@ -123,6 +190,35 @@
 
   function openEditLesson(lesson) {
     lessonForm = { ...lesson };
+    
+    // Parse blocks or fallback from legacy content
+    if (lesson.blocks && lesson.blocks.trim() !== '' && lesson.blocks.trim() !== '[]') {
+      try {
+        blocks = JSON.parse(lesson.blocks);
+      } catch (e) {
+        blocks = [];
+      }
+    } else {
+      // Create blocks from legacy fields if any
+      blocks = [];
+      if (lesson.image_url) {
+        blocks.push({ id: generateBlockId(), type: 'image', url: lesson.image_url, caption: '' });
+      }
+      if (lesson.content) {
+        blocks.push({ id: generateBlockId(), type: 'text', content: lesson.content });
+      }
+      if (lesson.notes) {
+        blocks.push({ id: generateBlockId(), type: 'note', content: lesson.notes });
+      }
+      if (lesson.starter_code) {
+        blocks.push({ id: generateBlockId(), type: 'code', title: 'Starter Code', code: lesson.starter_code });
+      }
+    }
+
+    if (blocks.length === 0) {
+      blocks = [{ id: generateBlockId(), type: 'text', content: '' }];
+    }
+
     showLessonModal = true;
   }
 
@@ -134,6 +230,17 @@
       }
       lessonForm.material_id = parseInt(lessonForm.material_id);
       lessonForm.order_index = parseInt(lessonForm.order_index) || 1;
+      lessonForm.blocks = JSON.stringify(blocks);
+
+      // Sinkronisasi legacy fields untuk backward compatibility
+      const firstText = blocks.find(b => b.type === 'text');
+      const firstImg = blocks.find(b => b.type === 'image');
+      const firstNote = blocks.find(b => b.type === 'note');
+      const firstCode = blocks.find(b => b.type === 'code');
+      if (firstText) lessonForm.content = firstText.content;
+      if (firstImg) lessonForm.image_url = firstImg.url;
+      if (firstNote) lessonForm.notes = firstNote.content;
+      if (firstCode && !lessonForm.starter_code) lessonForm.starter_code = firstCode.code;
 
       if (lessonForm.id) {
         await apiRequest(`/admin/lessons/${lessonForm.id}`, {
@@ -163,23 +270,7 @@
     }
   }
 
-  // Image Upload handler
-  async function handleImageUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    imageUploading = true;
-    try {
-      const res = await uploadImage(file);
-      lessonForm.image_url = res.url;
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      imageUploading = false;
-    }
-  }
-
-  function autoSlug(title, targetObj) {
+  function autoSlug(title) {
     return title.toLowerCase().trim()
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
@@ -391,8 +482,9 @@
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Materi</label>
+          <label for="mat-title" class="block text-xs font-semibold text-slate-700 mb-1">Judul Materi</label>
           <input 
+            id="mat-title"
             type="text" 
             bind:value={materialForm.title} 
             on:input={() => { if (!materialForm.id) materialForm.slug = autoSlug(materialForm.title); }}
@@ -402,8 +494,9 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Slug URL</label>
+          <label for="mat-slug" class="block text-xs font-semibold text-slate-700 mb-1">Slug URL</label>
           <input 
+            id="mat-slug"
             type="text" 
             bind:value={materialForm.slug} 
             placeholder="pengenalan-dasar-dart" 
@@ -412,8 +505,9 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi Singkat</label>
+          <label for="mat-desc" class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi Singkat</label>
           <textarea 
+            id="mat-desc"
             bind:value={materialForm.description} 
             rows="3" 
             placeholder="Ringkasan tentang materi ini..." 
@@ -422,8 +516,9 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Urutan Tampil</label>
+          <label for="mat-order" class="block text-xs font-semibold text-slate-700 mb-1">Nomor Urutan Tampil</label>
           <input 
+            id="mat-order"
             type="number" 
             bind:value={materialForm.order_index} 
             class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
@@ -449,112 +544,276 @@
   </div>
 {/if}
 
-<!-- MODAL: Form Lesson -->
+<!-- MODAL: Form Lesson (Dynamic Vertical Block Builder) -->
 {#if showLessonModal}
   <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-200 my-8">
-      <h3 class="text-lg font-bold text-slate-900 mb-4">
-        {lessonForm.id ? 'Edit Bab Pelajaran' : 'Tambah Bab Baru'}
-      </h3>
-
-      <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Materi Induk</label>
-            <select 
-              bind:value={lessonForm.material_id} 
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
-            >
-              {#each materials as m}
-                <option value={m.id}>{m.title}</option>
-              {/each}
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor Urutan Bab</label>
-            <input 
-              type="number" 
-              bind:value={lessonForm.order_index} 
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Bab</label>
-            <input 
-              type="text" 
-              bind:value={lessonForm.title} 
-              on:input={() => { if (!lessonForm.id) lessonForm.slug = autoSlug(lessonForm.title); }}
-              placeholder="Contoh: 1. Dasar Variabel & Tipe Data" 
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-            />
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Slug URL Bab</label>
-            <input 
-              type="text" 
-              bind:value={lessonForm.slug} 
-              placeholder="dasar-variabel" 
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono text-xs"
-            />
-          </div>
-        </div>
-
-        <!-- Image URL / Upload -->
+    <div class="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-xl border border-slate-200 my-8 flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 flex-shrink-0">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Gambar Materi (Opsional)</label>
-          <div class="flex gap-2 items-center">
-            <input 
-              type="text" 
-              bind:value={lessonForm.image_url} 
-              placeholder="Input URL gambar atau upload langsung ->" 
-              class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-xs"
-            />
-            <label class="cursor-pointer px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 flex-shrink-0">
-              {imageUploading ? 'Uploading...' : 'Pilih File'}
-              <input type="file" accept="image/*" on:change={handleImageUpload} class="hidden" disabled={imageUploading} />
-            </label>
+          <h3 class="text-lg font-bold text-slate-900">
+            {lessonForm.id ? 'Edit Bab Pelajaran' : 'Tambah Bab Baru'}
+          </h3>
+          <p class="text-xs text-slate-500">Susun konten bab secara vertikal & modular seperti Google Forms</p>
+        </div>
+        <button on:click={() => showLessonModal = false} class="text-slate-400 hover:text-slate-600 text-lg font-bold">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="space-y-6 overflow-y-auto py-4 pr-1 flex-1">
+        
+        <!-- Metadata Header -->
+        <div class="bg-slate-50/80 p-4 rounded-xl border border-slate-200 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="les-mat" class="block text-xs font-semibold text-slate-700 mb-1">Pilih Materi Induk</label>
+              <select 
+                id="les-mat"
+                bind:value={lessonForm.material_id} 
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+              >
+                {#each materials as m}
+                  <option value={m.id}>{m.title}</option>
+                {/each}
+              </select>
+            </div>
+
+            <div>
+              <label for="les-order" class="block text-xs font-semibold text-slate-700 mb-1">Nomor Urutan Bab</label>
+              <input 
+                id="les-order"
+                type="number" 
+                bind:value={lessonForm.order_index} 
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+              />
+            </div>
           </div>
-          {#if lessonForm.image_url}
-            <div class="mt-2 text-xs text-slate-500 flex items-center gap-2">
-              <span class="truncate">Preview:</span>
-              <img src={lessonForm.image_url} alt="Preview" class="h-10 w-16 object-cover rounded border" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="les-title" class="block text-xs font-semibold text-slate-700 mb-1">Judul Bab</label>
+              <input 
+                id="les-title"
+                type="text" 
+                bind:value={lessonForm.title} 
+                on:input={() => { if (!lessonForm.id) lessonForm.slug = autoSlug(lessonForm.title); }}
+                placeholder="Contoh: 1. Pengantar Dart & Struktur main()" 
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+              />
+            </div>
+
+            <div>
+              <label for="les-slug" class="block text-xs font-semibold text-slate-700 mb-1">Slug URL Bab</label>
+              <input 
+                id="les-slug"
+                type="text" 
+                bind:value={lessonForm.slug} 
+                placeholder="pengantar-dart-dan-main" 
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono text-xs bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Vertical Blocks Builder -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900">Blok Konten Bab ({blocks.length})</h4>
+              <p class="text-xs text-slate-500">Tambahkan dan atur urutan blok vertikal untuk menyusun materi</p>
+            </div>
+
+            <!-- Quick Add Bar -->
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-xs text-slate-400 font-medium mr-1">+ Tambah:</span>
+              <button 
+                type="button" 
+                on:click={() => addBlock('text')}
+                class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-blue-50 hover:text-[#0175C2] text-slate-700 transition border border-slate-200"
+              >
+                📝 Text
+              </button>
+              <button 
+                type="button" 
+                on:click={() => addBlock('image')}
+                class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 transition border border-slate-200"
+              >
+                🖼️ Image
+              </button>
+              <button 
+                type="button" 
+                on:click={() => addBlock('note')}
+                class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-amber-50 hover:text-amber-700 text-slate-700 transition border border-slate-200"
+              >
+                💡 Note
+              </button>
+              <button 
+                type="button" 
+                on:click={() => addBlock('code')}
+                class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-purple-50 hover:text-purple-700 text-slate-700 transition border border-slate-200"
+              >
+                💻 Code
+              </button>
+            </div>
+          </div>
+
+          <!-- Blocks List -->
+          {#if blocks.length === 0}
+            <div class="text-center py-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl">
+              <p class="text-xs text-slate-400">Belum ada blok konten. Gunakan tombol di atas untuk menambahkan blok pertama.</p>
+            </div>
+          {:else}
+            <div class="space-y-4">
+              {#each blocks as block, index (block.id || index)}
+                <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-xs hover:border-slate-300 transition-all">
+                  
+                  <!-- Block Card Top Header -->
+                  <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs font-mono font-bold px-2 py-0.5 rounded 
+                        {block.type === 'text' ? 'bg-blue-100 text-[#0175C2]' : ''}
+                        {block.type === 'image' ? 'bg-emerald-100 text-emerald-800' : ''}
+                        {block.type === 'note' ? 'bg-amber-100 text-amber-800' : ''}
+                        {block.type === 'code' ? 'bg-purple-100 text-purple-800' : ''}"
+                      >
+                        {index + 1}. Blok {block.type.toUpperCase()}
+                      </span>
+                    </div>
+
+                    <!-- Reorder & Delete Actions -->
+                    <div class="flex items-center gap-1">
+                      <button
+                        type="button"
+                        on:click={() => moveBlockUp(index)}
+                        disabled={index === 0}
+                        class="p-1 text-slate-500 hover:text-slate-800 disabled:opacity-30 rounded hover:bg-slate-100 transition"
+                        title="Geser ke Atas"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        type="button"
+                        on:click={() => moveBlockDown(index)}
+                        disabled={index === blocks.length - 1}
+                        class="p-1 text-slate-500 hover:text-slate-800 disabled:opacity-30 rounded hover:bg-slate-100 transition"
+                        title="Geser ke Bawah"
+                      >
+                        ▼
+                      </button>
+                      <button
+                        type="button"
+                        on:click={() => removeBlock(index)}
+                        class="p-1 ml-2 text-red-500 hover:text-red-700 rounded hover:bg-red-50 transition"
+                        title="Hapus Blok Ini"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Block Content Based on Type -->
+                  {#if block.type === 'text'}
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-700 mb-1">Teks / Markdown</label>
+                      <textarea
+                        bind:value={block.content}
+                        rows="4"
+                        placeholder="Tuliskan penjelasan bab, poin-poin materi, atau teks Markdown di sini..."
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono bg-white"
+                      ></textarea>
+                    </div>
+
+                  {:else if block.type === 'image'}
+                    <div class="space-y-3">
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">URL Gambar atau Upload File</label>
+                        <div class="flex gap-2">
+                          <input
+                            type="text"
+                            bind:value={block.url}
+                            placeholder="https://... atau upload file lokal"
+                            class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white"
+                          />
+                          <label class="cursor-pointer px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 flex-shrink-0">
+                            {uploadingBlockId === block.id ? 'Mengunggah...' : 'Upload Gambar'}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              on:change={(e) => handleBlockImageUpload(e, block.id)}
+                              class="hidden"
+                              disabled={uploadingBlockId === block.id}
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Keterangan / Caption Gambar (Opsional)</label>
+                        <input
+                          type="text"
+                          bind:value={block.caption}
+                          placeholder="Contoh: Diagram Alur Program Dart"
+                          class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white"
+                        />
+                      </div>
+
+                      {#if block.url}
+                        <div class="p-2 bg-slate-50 border rounded-lg flex items-center gap-3">
+                          <img src={block.url} alt={block.caption || 'Preview'} class="h-16 w-24 object-cover rounded border" />
+                          <span class="text-xs text-slate-500 truncate">{block.caption || block.url}</span>
+                        </div>
+                      {/if}
+                    </div>
+
+                  {:else if block.type === 'note'}
+                    <div>
+                      <label class="block text-xs font-semibold text-amber-800 mb-1">Catatan Penting / Tip Callout</label>
+                      <textarea
+                        bind:value={block.content}
+                        rows="2"
+                        placeholder="💡 Contoh: Selalu gunakan widget Const jika properti tidak pernah berubah..."
+                        class="w-full px-3 py-2 border border-amber-300 bg-amber-50/40 rounded-lg text-xs text-amber-950"
+                      ></textarea>
+                    </div>
+
+                  {:else if block.type === 'code'}
+                    <div class="space-y-2">
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Judul / Label Cuplikan Kode</label>
+                        <input
+                          type="text"
+                          bind:value={block.title}
+                          placeholder="Contoh: Contoh 1: Fungsi Named Parameter"
+                          class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kode Dart</label>
+                        <textarea
+                          bind:value={block.code}
+                          rows="4"
+                          placeholder="void main() &#123; ... &#125;"
+                          class="w-full px-3 py-2 border border-slate-700 rounded-lg text-xs font-mono bg-slate-900 text-slate-100"
+                        ></textarea>
+                      </div>
+                    </div>
+                  {/if}
+
+                </div>
+              {/each}
             </div>
           {/if}
         </div>
 
-        <!-- Markdown Content -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Konten Utama (Markdown Didukung)</label>
-          <textarea 
-            bind:value={lessonForm.content} 
-            rows="6" 
-            placeholder="Tuliskan materi pelajaran di sini menggunakan format Markdown..." 
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono"
-          ></textarea>
-        </div>
-
-        <!-- Notes / Callout -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Area Notes / Tips Penting (Opsional)</label>
-          <textarea 
-            bind:value={lessonForm.notes} 
-            rows="2" 
-            placeholder="Catatan atau tips khusus untuk siswa..." 
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-          ></textarea>
-        </div>
-
         <!-- Dart Simulation Settings -->
-        <div class="p-4 bg-sky-50/50 border border-sky-100 rounded-xl space-y-3">
+        <div class="p-4 bg-sky-50/60 border border-sky-100 rounded-xl space-y-3">
           <div class="flex items-center justify-between">
             <div>
               <span class="text-xs font-bold text-[#0175C2]">Area Simulasi Dart (Interactive DartPad)</span>
-              <p class="text-[11px] text-slate-500">Aktifkan layout split-screen dengan embed DartPad di sisi kanan</p>
+              <p class="text-[11px] text-slate-500">Aktifkan tombol toggle panel DartPad interaktif di sisi kanan</p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" bind:checked={lessonForm.enable_dartpad} class="sr-only peer" />
@@ -564,10 +823,11 @@
 
           {#if lessonForm.enable_dartpad}
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Starter Code (Dart)</label>
+              <label for="starter-code" class="block text-xs font-semibold text-slate-700 mb-1">Default Starter Code (Jika Ingin Disediakan)</label>
               <textarea 
+                id="starter-code"
                 bind:value={lessonForm.starter_code} 
-                rows="4" 
+                rows="3" 
                 placeholder="void main() &#123; print('Hello Dart'); &#125;" 
                 class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono bg-slate-900 text-slate-100"
               ></textarea>
@@ -577,20 +837,24 @@
 
       </div>
 
-      <div class="mt-6 flex justify-end gap-2 pt-4 border-t border-slate-100">
+      <!-- Modal Footer -->
+      <div class="flex justify-end gap-2 pt-4 border-t border-slate-200 flex-shrink-0">
         <button 
+          type="button"
           on:click={() => showLessonModal = false}
           class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition"
         >
           Batal
         </button>
         <button 
+          type="button"
           on:click={saveLesson}
           class="px-4 py-2 text-xs font-semibold text-white bg-[#0175C2] hover:bg-[#02569B] rounded-lg transition"
         >
-          Simpan Bab
+          Simpan Seluruh Bab & Blok
         </button>
       </div>
+
     </div>
   </div>
 {/if}

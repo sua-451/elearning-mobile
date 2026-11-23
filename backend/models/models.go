@@ -33,6 +33,7 @@ type Lesson struct {
 	Content       string    `gorm:"type:longtext" json:"content"`
 	Notes         string    `gorm:"type:text" json:"notes"`
 	StarterCode   string    `gorm:"type:text" json:"starter_code"`
+	Blocks        string    `gorm:"type:longtext" json:"blocks"`
 	EnableDartpad bool      `gorm:"default:false" json:"enable_dartpad"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`

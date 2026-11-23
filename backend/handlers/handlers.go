@@ -192,6 +192,7 @@ type LessonInput struct {
 	Content       string `json:"content"`
 	Notes         string `json:"notes"`
 	StarterCode   string `json:"starter_code"`
+	Blocks        string `json:"blocks"`
 	EnableDartpad bool   `json:"enable_dartpad"`
 }
 
@@ -211,6 +212,7 @@ func AdminCreateLesson(c *gin.Context) {
 		Content:       input.Content,
 		Notes:         input.Notes,
 		StarterCode:   input.StarterCode,
+		Blocks:        input.Blocks,
 		EnableDartpad: input.EnableDartpad,
 	}
 
@@ -244,6 +246,7 @@ func AdminUpdateLesson(c *gin.Context) {
 	lesson.Content = input.Content
 	lesson.Notes = input.Notes
 	lesson.StarterCode = input.StarterCode
+	lesson.Blocks = input.Blocks
 	lesson.EnableDartpad = input.EnableDartpad
 
 	if err := database.DB.Save(&lesson).Error; err != nil {
