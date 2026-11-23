@@ -1,6 +1,6 @@
 module e-learning-mobile-backend
 
-go 1.27.3
+go 1.27
 
 require (
 	github.com/gin-contrib/cors v1.7.11
