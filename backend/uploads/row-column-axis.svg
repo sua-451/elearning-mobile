@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="100%" height="100%" style="background:#0F172A;border-radius:12px;">
+  <!-- Header -->
+  <text x="30" y="36" fill="#94A3B8" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" letter-spacing="1">LAYOUT &amp; ALIGNMENT</text>
+  <text x="30" y="60" fill="#F8FAFC" font-family="-apple-system, sans-serif" font-size="18" font-weight="700">Row vs Column Axis Behavior</text>
+
+  <!-- Left Container: Row (Horizontal Main Axis) -->
+  <rect x="30" y="85" width="255" height="205" rx="8" fill="#1E293B" stroke="#0175C2" stroke-width="1.5"/>
+  <text x="45" y="112" fill="#54C5F8" font-family="-apple-system, sans-serif" font-size="14" font-weight="700">Row (Horizontal)</text>
+
+  <!-- Main Axis Arrow (Row: X axis) -->
+  <line x1="45" y1="130" x2="265" y2="130" stroke="#0175C2" stroke-width="2"/>
+  <polygon points="268,130 260,126 260,134" fill="#0175C2"/>
+  <text x="155" y="125" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="600" text-anchor="middle">MainAxis (Horizontal)</text>
+
+  <!-- Cross Axis Arrow (Row: Y axis) -->
+  <line x1="45" y1="145" x2="45" y2="265" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="45,268 42,260 48,260" fill="#64748B"/>
+  <text x="52" y="210" fill="#94A3B8" font-family="monospace" font-size="9" font-weight="600" transform="rotate(90 52,210)">CrossAxis (Vertical)</text>
+
+  <!-- Visual Row Elements -->
+  <rect x="80" y="165" width="45" height="45" rx="5" fill="#0175C2"/>
+  <text x="102" y="192" fill="#FFFFFF" font-family="monospace" font-size="12" font-weight="700" text-anchor="middle">1</text>
+  <rect x="135" y="165" width="45" height="45" rx="5" fill="#0284C7"/>
+  <text x="157" y="192" fill="#FFFFFF" font-family="monospace" font-size="12" font-weight="700" text-anchor="middle">2</text>
+  <rect x="190" y="165" width="45" height="45" rx="5" fill="#0369A1"/>
+  <text x="212" y="192" fill="#FFFFFF" font-family="monospace" font-size="12" font-weight="700" text-anchor="middle">3</text>
+
+
+  <!-- Right Container: Column (Vertical Main Axis) -->
+  <rect x="315" y="85" width="255" height="205" rx="8" fill="#1E293B" stroke="#54C5F8" stroke-width="1.5"/>
+  <text x="330" y="112" fill="#54C5F8" font-family="-apple-system, sans-serif" font-size="14" font-weight="700">Column (Vertical)</text>
+
+  <!-- Cross Axis Arrow (Column: X axis) -->
+  <line x1="330" y1="130" x2="550" y2="130" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="553,130 545,126 545,134" fill="#64748B"/>
+  <text x="440" y="125" fill="#94A3B8" font-family="monospace" font-size="9" font-weight="600" text-anchor="middle">CrossAxis (Horizontal)</text>
+
+  <!-- Main Axis Arrow (Column: Y axis) -->
+  <line x1="330" y1="145" x2="330" y2="265" stroke="#0175C2" stroke-width="2"/>
+  <polygon points="330,268 326,260 334,260" fill="#0175C2"/>
+  <text x="322" y="210" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="600" transform="rotate(-90 322,210)" text-anchor="middle">MainAxis (Vertical)</text>
+
+  <!-- Visual Column Elements -->
+  <rect x="385" y="145" width="125" height="30" rx="5" fill="#0175C2"/>
+  <text x="447" y="165" fill="#FFFFFF" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Item 1</text>
+  <rect x="385" y="185" width="125" height="30" rx="5" fill="#0284C7"/>
+  <text x="447" y="205" fill="#FFFFFF" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Item 2</text>
+  <rect x="385" y="225" width="125" height="30" rx="5" fill="#0369A1"/>
+  <text x="447" y="245" fill="#FFFFFF" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Item 3</text>
+</svg>

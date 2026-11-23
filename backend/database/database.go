@@ -64,65 +64,22 @@ func Seed() {
 		return
 	}
 
-	// 1. Seed Admin User
-	var adminCount int64
-	DB.Model(&models.User{}).Count(&adminCount)
-	if adminCount == 0 {
+	// 1. Migrasi pembersihan akun lama 'amiya' jika ada
+	var oldAmiya models.User
+	if err := DB.Where("username = ?", "amiya").First(&oldAmiya).Error; err == nil {
+		DB.Delete(&oldAmiya)
+		log.Println("🔄 Seeder: Akun lama 'amiya' telah dibersihkan dari database.")
+	}
+
+	// 2. Inisialisasi akun admin default 'admin'
+	var adminUser models.User
+	if err := DB.Where("username = ?", "admin").First(&adminUser).Error; err != nil {
 		hashedPass, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
-		admin := models.User{
+		adminUser = models.User{
 			Username: "admin",
 			Password: string(hashedPass),
 		}
-		DB.Create(&admin)
+		DB.Create(&adminUser)
 		log.Println("🌱 Seeder: Akun admin default berhasil dibuat (Username: admin | Password: admin123)")
-	}
-
-	// 2. Seed Default Material & Lessons
-	var materialCount int64
-	DB.Model(&models.Material{}).Count(&materialCount)
-	if materialCount == 0 {
-		material := models.Material{
-			Title:       "Pengenalan Dasar Dart",
-			Slug:        "pengenalan-dasar-dart",
-			Description: "Pelajari sintaks dasar bahasa pemrograman Dart yang menjadi fondasi utama framework Flutter.",
-			OrderIndex:  1,
-			Lessons: []models.Lesson{
-				{
-					Title:         "1. Pengantar Bahasa Dart & Struktur main()",
-					Slug:          "pengantar-dart-dan-main",
-					OrderIndex:    1,
-					ImageURL:      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
-					Content:       "### Selamat Datang di Dunia Dart!\n\nDart adalah bahasa pemrograman modern berorientasi objek yang dioptimalkan untuk pembuatan aplikasi cepat di berbagai platform (Mobile, Web, Desktop) oleh Google.\n\nSetiap program Dart dieksekusi pertama kali dari fungsi **`main()`**.\n\nContoh struktur dasar:\n```dart\nvoid main() {\n  print('Halo Pengembang Flutter!');\n}\n```",
-					Notes:         "💡 Tips: Fungsi main() adalah titik awal (entry point) mutlak dalam program Dart dan Flutter.",
-					StarterCode:   "void main() {\n  var greeting = 'Halo dari Dart!';\n  print(greeting);\n}",
-					Blocks:        "[{\"id\":\"blk_1\",\"type\":\"image\",\"url\":\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80\",\"caption\":\"Belajar Dart untuk Flutter Development\"},{\"id\":\"blk_2\",\"type\":\"text\",\"content\":\"### Selamat Datang di Dunia Dart!\\n\\nDart adalah bahasa pemrograman modern berorientasi objek yang dioptimalkan untuk pembuatan aplikasi cepat di berbagai platform (Mobile, Web, Desktop) oleh Google.\\n\\nSetiap program Dart dieksekusi pertama kali dari fungsi **`main()`**.\"},{\"id\":\"blk_3\",\"type\":\"note\",\"content\":\"💡 Tips: Fungsi main() adalah titik awal (entry point) mutlak dalam program Dart dan Flutter.\"},{\"id\":\"blk_4\",\"type\":\"code\",\"title\":\"Contoh 1: Entry Point main()\",\"code\":\"void main() {\\n  var greeting = 'Halo dari Dart!';\\n  print(greeting);\\n}\"}]",
-					EnableDartpad: true,
-				},
-				{
-					Title:         "2. Variabel & Tipe Data Dasar",
-					Slug:          "variabel-dan-tipe-data",
-					OrderIndex:    2,
-					ImageURL:      "",
-					Content:       "### Tipe Data Bawaan di Dart\n\nDart mendukung *type inference* menggunakan kata kunci `var`, atau deklarasi tipe data eksplisit:\n- `int` untuk bilangan bulat\n- `double` untuk bilangan desimal\n- `String` untuk teks\n- `bool` untuk boolean (`true` / `false`)\n\nSelain itu, Dart memiliki fitur **Null Safety** bawaan yang mencegah kesalahan error null reference saat runtime.",
-					Notes:         "📌 Catatan: Gunakan tipe eksplisit seperti `int` atau `String` jika ingin kode lebih ekspresif dan mudah dibaca oleh tim.",
-					StarterCode:   "void main() {\n  int umur = 21;\n  double tinggi = 175.5;\n  String nama = 'Bintang';\n  bool isStudent = true;\n\n  print('Nama: $nama, Umur: $umur tahun, Status: $isStudent');\n}",
-					Blocks:        "[{\"id\":\"blk_1\",\"type\":\"text\",\"content\":\"### Tipe Data Bawaan di Dart\\n\\nDart mendukung type inference menggunakan kata kunci `var`, atau deklarasi tipe data eksplisit:\\n- `int` untuk bilangan bulat\\n- `double` untuk bilangan desimal\\n- `String` untuk teks\\n- `bool` untuk boolean (`true` / `false`)\\n\\nSelain itu, Dart memiliki fitur Null Safety bawaan yang mencegah kesalahan error null reference saat runtime.\"},{\"id\":\"blk_2\",\"type\":\"note\",\"content\":\"📌 Catatan: Gunakan tipe eksplisit seperti int atau String jika ingin kode lebih ekspresif dan mudah dibaca oleh tim.\"},{\"id\":\"blk_3\",\"type\":\"code\",\"title\":\"Contoh Variabel & Interpolasi String\",\"code\":\"void main() {\\n  int umur = 21;\\n  double tinggi = 175.5;\\n  String nama = 'Bintang';\\n  bool isStudent = true;\\n\\n  print('Nama: $nama, Umur: $umur tahun, Status: $isStudent');\\n}\"}]",
-					EnableDartpad: true,
-				},
-				{
-					Title:         "3. Fungsi & Parameter",
-					Slug:          "fungsi-dan-parameter",
-					OrderIndex:    3,
-					ImageURL:      "",
-					Content:       "### Membuat Fungsi di Dart\n\nFungsi di Dart mendukung parameter wajib (*positional*) dan parameter bernama (*named parameters* yang dibungkus dengan kurung kurawal `{}`). Parameter bernama sangat umum digunakan dalam pembuatan Widget Flutter.\n\n```dart\nvoid sapa({required String nama, String salam = 'Halo'}) {\n  print('$salam, $nama!');\n}\n```",
-					Notes:         "✨ Parameter bernama (named parameters) memudahkan pembacaan fungsi ketika memiliki banyak argumen.",
-					StarterCode:   "void sapa({required String nama, String role = 'Mobile Developer'}) {\n  print('Halo $nama! Selamat belajar sebagai $role.');\n}\n\nvoid main() {\n  sapa(nama: 'Alex');\n  sapa(nama: 'Citra', role: 'Flutter Architect');\n}",
-					Blocks:        "[{\"id\":\"blk_1\",\"type\":\"text\",\"content\":\"### Membuat Fungsi di Dart\\n\\nFungsi di Dart mendukung parameter wajib (*positional*) dan parameter bernama (*named parameters* yang dibungkus dengan kurung kurawal `{}`). Parameter bernama sangat umum digunakan dalam pembuatan Widget Flutter.\"},{\"id\":\"blk_2\",\"type\":\"note\",\"content\":\"✨ Parameter bernama (named parameters) memudahkan pembacaan fungsi ketika memiliki banyak argumen.\"},{\"id\":\"blk_3\",\"type\":\"code\",\"title\":\"Contoh Fungsi Named Parameters\",\"code\":\"void sapa({required String nama, String role = 'Mobile Developer'}) {\\n  print('Halo $nama! Selamat belajar sebagai $role.');\\n}\\n\\nvoid main() {\\n  sapa(nama: 'Alex');\\n  sapa(nama: 'Citra', role: 'Flutter Architect');\\n}\"}]",
-					EnableDartpad: true,
-				},
-			},
-		}
-		DB.Create(&material)
-		log.Println("🌱 Seeder: Contoh materi 'Pengenalan Dasar Dart' berhasil ditambahkan!")
 	}
 }

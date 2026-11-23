@@ -1,5 +1,7 @@
 <script>
   import { apiRequest, setToken, setUser } from '../lib/api.js';
+  import Logo from '../components/Logo.svelte';
+  import { Shield, Lock, User, AlertCircle, Loader2 } from 'lucide-svelte';
 
   let username = '';
   let password = '';
@@ -32,59 +34,66 @@
 </script>
 
 <div class="min-h-[calc(100vh-100px)] flex items-center justify-center px-4 py-12">
-  <div class="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+  <div class="max-w-md w-full bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm transition-colors">
     <div class="text-center mb-6">
-      <div class="w-12 h-12 bg-blue-50 text-[#0175C2] rounded-xl flex items-center justify-center mx-auto mb-3 font-bold text-xl">
-        📱
+      <div class="flex justify-center mb-3">
+        <Logo />
       </div>
-      <h2 class="text-2xl font-extrabold text-slate-900">Admin Login</h2>
-      <p class="text-xs text-slate-500 mt-1">Kelola materi dan bab pembelajaran Dart & Flutter</p>
+      <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">MobileIndex Admin Login</h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Kelola materi dan bab pembelajaran Dart & Flutter</p>
     </div>
 
     {#if error}
-      <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
-        {error}
+      <div class="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-xs rounded-lg flex items-center gap-2">
+        <AlertCircle class="w-4 h-4 flex-shrink-0" />
+        <span>{error}</span>
       </div>
     {/if}
 
     <form on:submit|preventDefault={handleLogin} class="space-y-4">
       <div>
-        <label for="username" class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
-        <input 
-          id="username"
-          type="text" 
-          bind:value={username}
-          placeholder="admin"
-          required
-          class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0175C2] focus:border-transparent"
-        />
+        <label for="username" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Username</label>
+        <div class="relative">
+          <input 
+            id="username"
+            type="text" 
+            bind:value={username}
+            placeholder="Masukkan username"
+            required
+            class="w-full pl-9 pr-3.5 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0175C2]"
+          />
+          <User class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+        </div>
       </div>
 
       <div>
-        <label for="password" class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-        <input 
-          id="password"
-          type="password" 
-          bind:value={password}
-          placeholder="••••••••"
-          required
-          class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0175C2] focus:border-transparent"
-        />
+        <label for="password" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+        <div class="relative">
+          <input 
+            id="password"
+            type="password" 
+            bind:value={password}
+            placeholder="Masukkan password"
+            required
+            class="w-full pl-9 pr-3.5 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0175C2]"
+          />
+          <Lock class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+        </div>
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        class="w-full py-2.5 px-4 bg-[#0175C2] hover:bg-[#02569B] text-white text-sm font-semibold rounded-lg transition disabled:opacity-50"
+        class="w-full py-2.5 px-4 bg-[#0175C2] hover:bg-[#02569B] text-white text-sm font-semibold rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-xs cursor-pointer"
       >
-        {loading ? 'Memproses...' : 'Masuk ke Dashboard'}
+        {#if loading}
+          <Loader2 class="w-4 h-4 animate-spin" />
+          <span>Memproses...</span>
+        {:else}
+          <Shield class="w-4 h-4" />
+          <span>Masuk ke Dashboard</span>
+        {/if}
       </button>
     </form>
-
-    <div class="mt-6 pt-6 border-t border-slate-100 text-center">
-      <p class="text-xs text-slate-500">
-        Default Kredensial: <span class="font-mono font-semibold text-slate-700">admin</span> / <span class="font-mono font-semibold text-slate-700">admin123</span>
-      </p>
-    </div>
   </div>
 </div>

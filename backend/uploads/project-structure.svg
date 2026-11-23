@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="100%" height="100%" style="background:#0F172A;border-radius:12px;">
+  <!-- Header -->
+  <text x="30" y="36" fill="#94A3B8" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" letter-spacing="1">PROJECT ANATOMY</text>
+  <text x="30" y="60" fill="#F8FAFC" font-family="-apple-system, sans-serif" font-size="18" font-weight="700">Flutter Folder &amp; Configuration Structure</text>
+
+  <!-- Left: File tree -->
+  <rect x="30" y="85" width="240" height="205" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.2"/>
+  <text x="45" y="110" fill="#38BDF8" font-family="monospace" font-size="13" font-weight="700">my_flutter_app/</text>
+  <text x="65" y="135" fill="#94A3B8" font-family="monospace" font-size="12">├── android/</text>
+  <text x="65" y="160" fill="#94A3B8" font-family="monospace" font-size="12">├── ios/</text>
+  <text x="65" y="185" fill="#54C5F8" font-family="monospace" font-size="12" font-weight="600">├── lib/</text>
+  <text x="85" y="210" fill="#F8FAFC" font-family="monospace" font-size="12">└── main.dart</text>
+  <text x="65" y="235" fill="#54C5F8" font-family="monospace" font-size="12" font-weight="600">├── pubspec.yaml</text>
+  <text x="65" y="260" fill="#94A3B8" font-family="monospace" font-size="12">└── assets/images/</text>
+
+  <!-- Right: Detail callouts -->
+  <!-- Box 1: lib/main.dart -->
+  <rect x="295" y="85" width="275" height="95" rx="8" fill="#1E293B" stroke="#0175C2" stroke-width="1.5"/>
+  <rect x="310" y="98" width="110" height="22" rx="4" fill="#0175C2"/>
+  <text x="365" y="113" fill="#FFFFFF" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">lib/main.dart</text>
+  <text x="310" y="140" fill="#E2E8F0" font-family="-apple-system, sans-serif" font-size="12" font-weight="500">Titik Masuk Utama (Entry Point)</text>
+  <text x="310" y="160" fill="#94A3B8" font-family="-apple-system, sans-serif" font-size="11">Fungsi main() dan kode antarmuka UI aplikasi.</text>
+
+  <!-- Box 2: pubspec.yaml -->
+  <rect x="295" y="195" width="275" height="95" rx="8" fill="#1E293B" stroke="#54C5F8" stroke-width="1.5"/>
+  <rect x="310" y="208" width="125" height="22" rx="4" fill="#0369A1"/>
+  <text x="372" y="223" fill="#FFFFFF" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">pubspec.yaml</text>
+  <text x="310" y="250" fill="#E2E8F0" font-family="-apple-system, sans-serif" font-size="12" font-weight="500">Konfigurasi &amp; Dependensi</text>
+  <text x="310" y="270" fill="#94A3B8" font-family="-apple-system, sans-serif" font-size="11">Daftar package pihak ketiga &amp; path aset gambar.</text>
+</svg>

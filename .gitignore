@@ -1,0 +1,51 @@
+# Environment & Secrets (Penting: Jangan commit kredensial / rahasia)
+.env
+.env.*
+!.env.example
+
+# Golang Binaries & Build Output
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+backend/bin/
+backend/*.exe
+e-learning-mobile-backend.exe
+server.exe
+
+# User Uploaded Static Files (Kecuali .gitkeep dan diagram svg materi teknis bawaan)
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/uploads/*.svg
+
+# Node & Frontend Dependencies
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Frontend Build Output & Cache
+dist/
+dist-ssr/
+frontend/dist/
+.svelte-kit/
+
+# IDE & Editor Configurations
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Test & Coverage Artifacts
+*.out
+*.test
+coverage/

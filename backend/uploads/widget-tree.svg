@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="100%" height="100%" style="background:#0F172A;border-radius:12px;">
+  <!-- Header -->
+  <text x="30" y="36" fill="#94A3B8" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" letter-spacing="1">FLUTTER ARCHITECTURE</text>
+  <text x="30" y="60" fill="#F8FAFC" font-family="-apple-system, sans-serif" font-size="18" font-weight="700">Hierarchical Widget Tree</text>
+
+  <!-- Root Widget: MaterialApp -->
+  <rect x="220" y="90" width="160" height="36" rx="6" fill="#0175C2" stroke="#54C5F8" stroke-width="1.5"/>
+  <text x="300" y="113" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" text-anchor="middle">MaterialApp</text>
+
+  <!-- Line Root -> Scaffold -->
+  <line x1="300" y1="126" x2="300" y2="155" stroke="#334155" stroke-width="2"/>
+
+  <!-- Node: Scaffold -->
+  <rect x="230" y="155" width="140" height="34" rx="6" fill="#1E293B" stroke="#0175C2" stroke-width="1.5"/>
+  <text x="300" y="177" fill="#F8FAFC" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" text-anchor="middle">Scaffold</text>
+
+  <!-- Lines Scaffold -> AppBar & Body -->
+  <path d="M 270 189 L 270 215 L 140 215 L 140 230" fill="none" stroke="#334155" stroke-width="2"/>
+  <path d="M 330 189 L 330 215 L 450 215 L 450 230" fill="none" stroke="#334155" stroke-width="2"/>
+
+  <!-- Node: AppBar (Left branch) -->
+  <rect x="70" y="230" width="140" height="34" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1.2"/>
+  <text x="140" y="252" fill="#E2E8F0" font-family="-apple-system, sans-serif" font-size="12" font-weight="500" text-anchor="middle">AppBar (Title)</text>
+
+  <!-- Line AppBar -> Text -->
+  <line x1="140" y1="264" x2="140" y2="280" stroke="#334155" stroke-width="1.5"/>
+  <rect x="80" y="280" width="120" height="26" rx="4" fill="#0F172A" stroke="#54C5F8" stroke-width="1"/>
+  <text x="140" y="297" fill="#54C5F8" font-family="-apple-system, sans-serif" font-size="11" font-weight="500" text-anchor="middle">Text Widget</text>
+
+  <!-- Node: Body / SingleChildScrollView (Right branch) -->
+  <rect x="360" y="230" width="180" height="34" rx="6" fill="#1E293B" stroke="#0175C2" stroke-width="1.5"/>
+  <text x="450" y="252" fill="#F8FAFC" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" text-anchor="middle">SingleChildScrollView</text>
+
+  <!-- Line to Column -->
+  <line x1="450" y1="264" x2="450" y2="280" stroke="#334155" stroke-width="1.5"/>
+  <rect x="380" y="280" width="140" height="26" rx="4" fill="#0F172A" stroke="#54C5F8" stroke-width="1"/>
+  <text x="450" y="297" fill="#54C5F8" font-family="-apple-system, sans-serif" font-size="11" font-weight="500" text-anchor="middle">Column &amp; Cards</text>
+</svg>

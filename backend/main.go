@@ -41,7 +41,7 @@ func main() {
 	api := r.Group("/api")
 	{
 		api.GET("/health", func(c *gin.Context) {
-			c.JSON(200, gin.H{"status": "ok", "app": "Dart & Flutter Mobile E-Learning API"})
+			c.JSON(200, gin.H{"status": "ok", "app": "MobileIndex - Dart & Flutter Mobile Learning API"})
 		})
 		api.POST("/auth/login", handlers.Login)
 		api.GET("/materials", handlers.GetMaterials)
