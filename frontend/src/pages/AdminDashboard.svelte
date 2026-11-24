@@ -407,25 +407,25 @@
   }
 </script>
 
-<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
   <!-- Top Bar -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-6 mb-6 border-b border-slate-200 dark:border-slate-800 gap-4">
     <div>
       <span class="text-xs font-bold text-[#0175C2] dark:text-sky-400 uppercase tracking-wider">MobileIndex Admin</span>
-      <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Manajemen Konten E-Learning</h1>
+      <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Manajemen Konten E-Learning</h1>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
       <a 
         href="#/" 
-        class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition"
+        class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition min-h-[40px]"
       >
         <ExternalLink class="w-3.5 h-3.5" />
-        <span>Lihat Web Publik</span>
+        <span>Web Publik</span>
       </a>
       <button 
         on:click={handleLogout}
-        class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/60 transition cursor-pointer"
+        class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/60 transition cursor-pointer min-h-[40px]"
       >
         <LogOut class="w-3.5 h-3.5" />
         <span>Logout</span>
@@ -433,28 +433,28 @@
     </div>
   </div>
 
-  <!-- Tabs Navigation -->
-  <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6 gap-6">
+  <!-- Tabs Navigation with Horizontal Scroll for Mobile -->
+  <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6 gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
     <button 
       on:click={() => activeTab = 'materials'}
-      class="inline-flex items-center gap-2 pb-3 text-sm font-semibold transition border-b-2 {activeTab === 'materials' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
+      class="inline-flex items-center gap-2 pb-3 text-xs sm:text-sm font-semibold transition border-b-2 whitespace-nowrap min-h-[40px] cursor-pointer {activeTab === 'materials' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
     >
-      <BookOpen class="w-4 h-4" />
-      <span>Daftar Materi ({materials.length})</span>
+      <BookOpen class="w-4 h-4 flex-shrink-0" />
+      <span>Materi ({materials.length})</span>
     </button>
     <button 
       on:click={() => activeTab = 'lessons'}
-      class="inline-flex items-center gap-2 pb-3 text-sm font-semibold transition border-b-2 {activeTab === 'lessons' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
+      class="inline-flex items-center gap-2 pb-3 text-xs sm:text-sm font-semibold transition border-b-2 whitespace-nowrap min-h-[40px] cursor-pointer {activeTab === 'lessons' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
     >
-      <Layers class="w-4 h-4" />
-      <span>Semua Bab Pembelajaran</span>
+      <Layers class="w-4 h-4 flex-shrink-0" />
+      <span>Bab Pembelajaran</span>
     </button>
     <button 
       on:click={() => activeTab = 'admins'}
-      class="inline-flex items-center gap-2 pb-3 text-sm font-semibold transition border-b-2 {activeTab === 'admins' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
+      class="inline-flex items-center gap-2 pb-3 text-xs sm:text-sm font-semibold transition border-b-2 whitespace-nowrap min-h-[40px] cursor-pointer {activeTab === 'admins' ? 'border-[#0175C2] text-[#0175C2] dark:text-sky-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}"
     >
-      <Users class="w-4 h-4" />
-      <span>Kelola Admin ({users.length})</span>
+      <Users class="w-4 h-4 flex-shrink-0" />
+      <span>Admin ({users.length})</span>
     </button>
   </div>
 
@@ -464,7 +464,7 @@
       <p class="mt-2 text-sm">Memuat data admin...</p>
     </div>
   {:else if error}
-    <div class="p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm rounded-lg mb-6 flex items-center gap-2">
+    <div class="p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm rounded-xl mb-6 flex items-center gap-2">
       <AlertCircle class="w-4 h-4 flex-shrink-0" />
       <span>{error}</span>
     </div>
@@ -472,19 +472,20 @@
     <!-- Tab 1: Materials Management -->
     {#if activeTab === 'materials'}
       <div class="space-y-4">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p class="text-xs text-slate-500 dark:text-slate-400">Kelola modul materi MobileIndex tingkat utama</p>
           <button 
             on:click={openCreateMaterial}
-            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-lg transition shadow-xs"
+            class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-xl transition shadow-xs min-h-[40px] cursor-pointer"
           >
             <Plus class="w-3.5 h-3.5" />
             <span>Tambah Materi Baru</span>
           </button>
         </div>
 
-        <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
-          <table class="w-full text-left text-sm">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto shadow-xs">
+          <table class="w-full text-left text-sm min-w-[600px]">
             <thead class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400">
               <tr>
                 <th class="p-3 w-16 text-center">Urutan</th>
@@ -508,19 +509,19 @@
                   <td class="p-3 text-right space-x-2">
                     <button 
                       on:click={() => openCreateLesson(item.id)}
-                      class="text-xs text-[#0175C2] dark:text-sky-400 hover:underline font-medium"
+                      class="text-xs text-[#0175C2] dark:text-sky-400 hover:underline font-medium p-1 cursor-pointer"
                     >
                       + Bab
                     </button>
                     <button 
                       on:click={() => openEditMaterial(item)}
-                      class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium"
+                      class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium p-1 cursor-pointer"
                     >
                       Edit
                     </button>
                     <button 
                       on:click={() => deleteMaterial(item.id)}
-                      class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium"
+                      class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium p-1 cursor-pointer"
                     >
                       Hapus
                     </button>
@@ -535,17 +536,67 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Mobile Card List View (<768px) -->
+        <div class="md:hidden space-y-3">
+          {#each materials as item}
+            <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-3 shadow-xs">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="text-[10px] font-mono uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded">
+                    Urutan {item.order_index}
+                  </span>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white mt-1">{item.title}</h3>
+                  <p class="text-xs font-mono text-slate-400 mt-0.5">/materials/{item.slug}</p>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-950 text-[#0175C2] dark:text-sky-300 font-semibold flex-shrink-0">
+                  {item.lessons ? item.lessons.length : 0} Bab
+                </span>
+              </div>
+
+              {#if item.description}
+                <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{item.description}</p>
+              {/if}
+
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+                <button 
+                  on:click={() => openCreateLesson(item.id)}
+                  class="px-3 py-2 text-xs text-[#0175C2] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 font-semibold rounded-lg min-h-[40px] cursor-pointer"
+                >
+                  + Bab
+                </button>
+                <button 
+                  on:click={() => openEditMaterial(item)}
+                  class="px-3 py-2 text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 font-medium rounded-lg min-h-[40px] cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button 
+                  on:click={() => deleteMaterial(item.id)}
+                  class="px-3 py-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 font-medium rounded-lg min-h-[40px] cursor-pointer"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          {/each}
+          {#if materials.length === 0}
+            <div class="p-6 text-center text-slate-400 text-xs bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
+              Belum ada materi. Klik tombol tambah di atas.
+            </div>
+          {/if}
+        </div>
       </div>
     {/if}
 
     <!-- Tab 2: Lessons Management -->
     {#if activeTab === 'lessons'}
       <div class="space-y-4">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <p class="text-xs text-slate-500 dark:text-slate-400">Kelola bab pelajaran di dalam setiap materi</p>
           <button 
             on:click={() => openCreateLesson()}
-            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-lg transition shadow-xs"
+            class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-xl transition shadow-xs min-h-[40px] cursor-pointer"
           >
             <Plus class="w-3.5 h-3.5" />
             <span>Tambah Bab Baru</span>
@@ -554,63 +605,110 @@
 
         {#each materials as mat}
           <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs mb-6">
-            <div class="p-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <div class="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span class="font-bold text-sm text-slate-900 dark:text-white">{mat.title}</span>
               <button 
                 on:click={() => openCreateLesson(mat.id)}
-                class="text-xs font-semibold text-[#0175C2] dark:text-sky-400 hover:underline"
+                class="text-xs font-semibold text-[#0175C2] dark:text-sky-400 hover:underline self-start sm:self-auto py-1"
               >
                 + Tambah Bab ke Materi Ini
               </button>
             </div>
 
-            <table class="w-full text-left text-sm">
-              <thead class="text-xs font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
-                <tr>
-                  <th class="p-3 w-16 text-center">Urutan</th>
-                  <th class="p-3">Judul Bab</th>
-                  <th class="p-3">Slug</th>
-                  <th class="p-3 w-28 text-center">DartPad</th>
-                  <th class="p-3 w-32 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                {#if mat.lessons && mat.lessons.length > 0}
-                  {#each mat.lessons as lesson}
-                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                      <td class="p-3 text-center font-mono text-xs text-slate-400">{lesson.order_index}</td>
-                      <td class="p-3 font-medium text-slate-800 dark:text-slate-200">{lesson.title}</td>
-                      <td class="p-3 font-mono text-xs text-slate-500 dark:text-slate-400">{lesson.slug}</td>
-                      <td class="p-3 text-center">
-                        {#if lesson.enable_dartpad}
-                          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Aktif</span>
-                        {:else}
-                          <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Nonaktif</span>
-                        {/if}
-                      </td>
-                      <td class="p-3 text-right space-x-2">
+            <!-- Desktop Lessons Table -->
+            <div class="hidden md:block overflow-x-auto">
+              <table class="w-full text-left text-sm min-w-[550px]">
+                <thead class="text-xs font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
+                  <tr>
+                    <th class="p-3 w-16 text-center">Urutan</th>
+                    <th class="p-3">Judul Bab</th>
+                    <th class="p-3">Slug</th>
+                    <th class="p-3 w-28 text-center">DartPad</th>
+                    <th class="p-3 w-32 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                  {#if mat.lessons && mat.lessons.length > 0}
+                    {#each mat.lessons as lesson}
+                      <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+                        <td class="p-3 text-center font-mono text-xs text-slate-400">{lesson.order_index}</td>
+                        <td class="p-3 font-medium text-slate-800 dark:text-slate-200">{lesson.title}</td>
+                        <td class="p-3 font-mono text-xs text-slate-500 dark:text-slate-400">{lesson.slug}</td>
+                        <td class="p-3 text-center">
+                          {#if lesson.enable_dartpad}
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Aktif</span>
+                          {:else}
+                            <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Nonaktif</span>
+                          {/if}
+                        </td>
+                        <td class="p-3 text-right space-x-2">
+                          <button 
+                            on:click={() => openEditLesson(lesson)}
+                            class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium p-1 cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            on:click={() => deleteLesson(lesson.id)}
+                            class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium p-1 cursor-pointer"
+                          >
+                            Hapus
+                          </button>
+                        </td>
+                      </tr>
+                    {/each}
+                  {:else}
+                    <tr>
+                      <td colspan="5" class="p-4 text-center text-slate-400 text-xs">Belum ada bab untuk materi ini.</td>
+                    </tr>
+                  {/if}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mobile Lessons Card List (<768px) -->
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+              {#if mat.lessons && mat.lessons.length > 0}
+                {#each mat.lessons as lesson}
+                  <div class="p-3.5 space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                          #{lesson.order_index}
+                        </span>
+                        <h4 class="font-semibold text-slate-900 dark:text-white text-sm">{lesson.title}</h4>
+                      </div>
+                      {#if lesson.enable_dartpad}
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex-shrink-0">
+                          DartPad
+                        </span>
+                      {/if}
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+                      <span class="font-mono text-[11px] truncate">{lesson.slug}</span>
+                      <div class="flex items-center gap-2">
                         <button 
                           on:click={() => openEditLesson(lesson)}
-                          class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium"
+                          class="px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 font-medium rounded-lg min-h-[36px] cursor-pointer"
                         >
                           Edit
                         </button>
                         <button 
                           on:click={() => deleteLesson(lesson.id)}
-                          class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium"
+                          class="px-2.5 py-1.5 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 font-medium rounded-lg min-h-[36px] cursor-pointer"
                         >
                           Hapus
                         </button>
-                      </td>
-                    </tr>
-                  {/each}
-                {:else}
-                  <tr>
-                    <td colspan="5" class="p-4 text-center text-slate-400 text-xs">Belum ada bab untuk materi ini.</td>
-                  </tr>
-                {/if}
-              </tbody>
-            </table>
+                      </div>
+                    </div>
+                  </div>
+                {/each}
+              {:else}
+                <div class="p-4 text-center text-slate-400 text-xs">Belum ada bab untuk materi ini.</div>
+              {/if}
+            </div>
+
           </div>
         {/each}
       </div>
@@ -622,20 +720,20 @@
         {#if adminMessage}
           <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs rounded-xl flex items-center justify-between">
             <span class="flex items-center gap-2">
-              <ShieldCheck class="w-4 h-4 text-emerald-600" />
+              <ShieldCheck class="w-4 h-4 text-emerald-600 flex-shrink-0" />
               <span>{adminMessage}</span>
             </span>
-            <button on:click={() => adminMessage = ''} class="text-emerald-600 hover:text-emerald-800"><X class="w-3.5 h-3.5" /></button>
+            <button on:click={() => adminMessage = ''} class="text-emerald-600 hover:text-emerald-800 p-1"><X class="w-3.5 h-3.5" /></button>
           </div>
         {/if}
 
         {#if adminError}
           <div class="p-3.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-xs rounded-xl flex items-center justify-between">
             <span class="flex items-center gap-2">
-              <AlertCircle class="w-4 h-4 text-red-600" />
+              <AlertCircle class="w-4 h-4 text-red-600 flex-shrink-0" />
               <span>{adminError}</span>
             </span>
-            <button on:click={() => adminError = ''} class="text-red-600 hover:text-red-800"><X class="w-3.5 h-3.5" /></button>
+            <button on:click={() => adminError = ''} class="text-red-600 hover:text-red-800 p-1"><X class="w-3.5 h-3.5" /></button>
           </div>
         {/if}
 
@@ -661,7 +759,7 @@
                   bind:value={newAdminUsername}
                   placeholder="Contoh: amiya"
                   required
-                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                  class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
                 />
               </div>
 
@@ -673,14 +771,14 @@
                   bind:value={newAdminPassword}
                   placeholder="Minimal 5 karakter"
                   required
-                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                  class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
                 />
               </div>
 
               <button 
                 type="submit"
                 disabled={adminActionLoading}
-                class="w-full py-2 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-lg transition disabled:opacity-50 cursor-pointer"
+                class="w-full py-2.5 bg-[#0175C2] hover:bg-[#02569B] text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 cursor-pointer min-h-[44px]"
               >
                 {adminActionLoading ? 'Menyimpan...' : 'Tambah Admin'}
               </button>
@@ -710,7 +808,7 @@
                   bind:value={currentPassword}
                   placeholder="Masukkan kata sandi lama"
                   required
-                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                  class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
                 />
               </div>
 
@@ -723,7 +821,7 @@
                     bind:value={newPassword}
                     placeholder="Minimal 5 karakter"
                     required
-                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                    class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
                   />
                 </div>
                 <div>
@@ -734,7 +832,7 @@
                     bind:value={confirmNewPassword}
                     placeholder="Ulangi kata sandi baru"
                     required
-                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
+                    class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0175C2]"
                   />
                 </div>
               </div>
@@ -742,7 +840,7 @@
               <button 
                 type="submit"
                 disabled={adminActionLoading}
-                class="w-full py-2 bg-slate-900 hover:bg-black dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition disabled:opacity-50 cursor-pointer"
+                class="w-full py-2.5 bg-slate-900 hover:bg-black dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 cursor-pointer min-h-[44px]"
               >
                 {adminActionLoading ? 'Memproses...' : 'Simpan Password Baru'}
               </button>
@@ -750,71 +848,73 @@
           </div>
         </div>
 
-        <!-- Tabel Daftar Semua Akun Admin -->
+        <!-- Tabel Daftar Semua Akun Admin (Responsive wrapper) -->
         <div class="bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
           <div class="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
             <span class="font-bold text-xs text-slate-700 dark:text-slate-300">Daftar Admin Terdaftar</span>
             <span class="text-xs text-slate-400">Total: {users.length} akun</span>
           </div>
 
-          <table class="w-full text-left text-sm">
-            <thead class="text-xs font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
-              <tr>
-                <th class="p-3 w-16 text-center">ID</th>
-                <th class="p-3">Username</th>
-                <th class="p-3">Status</th>
-                <th class="p-3 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              {#each users as u}
-                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                  <td class="p-3 text-center font-mono text-xs text-slate-400">{u.id}</td>
-                  <td class="p-3 font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <span>{u.username}</span>
-                    {#if currentUser && currentUser.id === u.id}
-                      <span class="text-[10px] bg-sky-100 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 font-semibold px-2 py-0.5 rounded-full">
-                        Anda (Sedang Login)
-                      </span>
-                    {/if}
-                  </td>
-                  <td class="p-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      <span>Aktif</span>
-                    </span>
-                  </td>
-                  <td class="p-3 text-right">
-                    {#if currentUser && currentUser.id === u.id}
-                      <span class="text-xs text-slate-400 italic">Akun aktif</span>
-                    {:else}
-                      <button 
-                        on:click={() => handleDeleteAdmin(u.id, u.username)}
-                        class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium cursor-pointer"
-                      >
-                        Hapus Admin
-                      </button>
-                    {/if}
-                  </td>
-                </tr>
-              {/each}
-              {#if users.length === 0}
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm min-w-[400px]">
+              <thead class="text-xs font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
                 <tr>
-                  <td colspan="4" class="p-4 text-center text-slate-400 text-xs">Belum ada akun admin lain.</td>
+                  <th class="p-3 w-16 text-center">ID</th>
+                  <th class="p-3">Username</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Aksi</th>
                 </tr>
-              {/if}
-            </tbody>
-          </table>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                {#each users as u}
+                  <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+                    <td class="p-3 text-center font-mono text-xs text-slate-400">{u.id}</td>
+                    <td class="p-3 font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 flex-wrap">
+                      <span>{u.username}</span>
+                      {#if currentUser && currentUser.id === u.id}
+                        <span class="text-[10px] bg-sky-100 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 font-semibold px-2 py-0.5 rounded-full">
+                          Anda (Sedang Login)
+                        </span>
+                      {/if}
+                    </td>
+                    <td class="p-3 text-xs text-slate-500 dark:text-slate-400">
+                      <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Aktif</span>
+                      </span>
+                    </td>
+                    <td class="p-3 text-right">
+                      {#if currentUser && currentUser.id === u.id}
+                        <span class="text-xs text-slate-400 italic">Akun aktif</span>
+                      {:else}
+                        <button 
+                          on:click={() => handleDeleteAdmin(u.id, u.username)}
+                          class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium cursor-pointer p-1.5"
+                        >
+                          Hapus Admin
+                        </button>
+                      {/if}
+                    </td>
+                  </tr>
+                {/each}
+                {#if users.length === 0}
+                  <tr>
+                    <td colspan="4" class="p-4 text-center text-slate-400 text-xs">Belum ada akun admin lain.</td>
+                  </tr>
+                {/if}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     {/if}
   {/if}
 </div>
 
-<!-- MODAL: Form Material -->
+<!-- MODAL: Form Material (Responsive for mobile) -->
 {#if showMaterialModal}
-  <div class="fixed inset-0 bg-slate-900/50 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white dark:bg-slate-950 rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 dark:border-slate-800">
+  <div class="fixed inset-0 bg-slate-900/50 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-950 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-xl border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
       <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">
         {materialForm.id ? 'Edit Materi' : 'Tambah Materi Baru'}
       </h3>
@@ -828,7 +928,7 @@
             bind:value={materialForm.title} 
             on:input={() => { if (!materialForm.id) materialForm.slug = autoSlug(materialForm.title); }}
             placeholder="Contoh: Pengenalan Dasar Dart" 
-            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
           />
         </div>
 
@@ -839,7 +939,7 @@
             type="text" 
             bind:value={materialForm.slug} 
             placeholder="pengenalan-dasar-dart" 
-            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-mono text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-mono text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
           />
         </div>
 
@@ -850,7 +950,7 @@
             bind:value={materialForm.description} 
             rows="3" 
             placeholder="Ringkasan tentang materi ini..." 
-            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
           ></textarea>
         </div>
 
@@ -860,7 +960,7 @@
             id="mat-order"
             type="number" 
             bind:value={materialForm.order_index} 
-            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
           />
         </div>
       </div>
@@ -868,13 +968,13 @@
       <div class="mt-6 flex justify-end gap-2">
         <button 
           on:click={() => showMaterialModal = false}
-          class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
+          class="px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition min-h-[40px] cursor-pointer"
         >
           Batal
         </button>
         <button 
           on:click={saveMaterial}
-          class="px-4 py-2 text-xs font-semibold text-white bg-[#0175C2] hover:bg-[#02569B] rounded-lg transition"
+          class="px-4 py-2.5 text-xs font-semibold text-white bg-[#0175C2] hover:bg-[#02569B] rounded-xl transition min-h-[40px] cursor-pointer"
         >
           Simpan Materi
         </button>
@@ -883,30 +983,30 @@
   </div>
 {/if}
 
-<!-- MODAL: Form Lesson (Dynamic Vertical Block Builder) -->
+<!-- MODAL: Form Lesson (Dynamic Vertical Block Builder, fully mobile scrollable & responsive) -->
 {#if showLessonModal}
-  <div class="fixed inset-0 bg-slate-900/50 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-white dark:bg-slate-950 rounded-2xl max-w-4xl w-full p-6 shadow-xl border border-slate-200 dark:border-slate-800 my-8 flex flex-col max-h-[90vh]">
+  <div class="fixed inset-0 bg-slate-900/50 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-950 rounded-2xl max-w-4xl w-full p-4 sm:p-6 shadow-xl border border-slate-200 dark:border-slate-800 my-4 sm:my-8 flex flex-col max-h-[92vh]">
       
       <!-- Modal Header -->
-      <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+      <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
         <div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
             {lessonForm.id ? 'Edit Bab Pelajaran' : 'Tambah Bab Baru'}
           </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Susun konten bab secara vertikal & modular seperti Google Forms</p>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Susun konten bab secara vertikal & modular</p>
         </div>
-        <button on:click={() => showLessonModal = false} class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold">
+        <button on:click={() => showLessonModal = false} class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
           <X class="w-5 h-5" />
         </button>
       </div>
 
       <!-- Modal Body (Scrollable) -->
-      <div class="space-y-6 overflow-y-auto py-4 pr-1 flex-1">
+      <div class="space-y-4 sm:space-y-6 overflow-y-auto py-3 sm:py-4 pr-1 flex-1">
         
         <!-- Metadata Header -->
-        <div class="bg-slate-50/80 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-slate-50/80 dark:bg-slate-900/60 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label for="les-mat" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Pilih Materi Induk</label>
               <select 
@@ -931,7 +1031,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label for="les-title" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Judul Bab</label>
               <input 
@@ -962,7 +1062,7 @@
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
               <h4 class="text-sm font-bold text-slate-900 dark:text-white">Blok Konten Bab ({blocks.length})</h4>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Tambahkan dan atur urutan blok vertikal untuk menyusun materi</p>
+              <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Atur urutan blok vertikal untuk menyusun materi</p>
             </div>
 
             <!-- Quick Add Bar -->
@@ -971,7 +1071,7 @@
               <button 
                 type="button" 
                 on:click={() => addBlock('text')}
-                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-sky-950/60 hover:text-[#0175C2] dark:hover:text-sky-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700"
+                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-sky-950/60 hover:text-[#0175C2] dark:hover:text-sky-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700 min-h-[36px]"
               >
                 <Type class="w-3.5 h-3.5" />
                 <span>Text</span>
@@ -979,7 +1079,7 @@
               <button 
                 type="button" 
                 on:click={() => addBlock('image')}
-                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-700 dark:hover:text-emerald-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700"
+                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-700 dark:hover:text-emerald-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700 min-h-[36px]"
               >
                 <Image class="w-3.5 h-3.5" />
                 <span>Image</span>
@@ -987,7 +1087,7 @@
               <button 
                 type="button" 
                 on:click={() => addBlock('note')}
-                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/60 hover:text-amber-700 dark:hover:text-amber-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700"
+                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/60 hover:text-amber-700 dark:hover:text-amber-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700 min-h-[36px]"
               >
                 <Lightbulb class="w-3.5 h-3.5" />
                 <span>Note</span>
@@ -995,7 +1095,7 @@
               <button 
                 type="button" 
                 on:click={() => addBlock('code')}
-                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:text-purple-700 dark:hover:text-purple-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700"
+                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:text-purple-700 dark:hover:text-purple-300 text-slate-700 dark:text-slate-300 transition border border-slate-200 dark:border-slate-700 min-h-[36px]"
               >
                 <Code class="w-3.5 h-3.5" />
                 <span>Code</span>
@@ -1011,10 +1111,10 @@
           {:else}
             <div class="space-y-4">
               {#each blocks as block, index (block.id || index)}
-                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                <div class="p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all">
                   
                   <!-- Block Card Top Header -->
-                  <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
                       <span class="text-xs font-mono font-bold px-2 py-0.5 rounded 
                         {block.type === 'text' ? 'bg-blue-100 dark:bg-sky-950 text-[#0175C2] dark:text-sky-300' : ''}
@@ -1022,7 +1122,7 @@
                         {block.type === 'note' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : ''}
                         {block.type === 'code' ? 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300' : ''}"
                       >
-                        {index + 1}. Blok {block.type.toUpperCase()}
+                        {index + 1}. {block.type.toUpperCase()}
                       </span>
                     </div>
 
@@ -1032,7 +1132,7 @@
                         type="button"
                         on:click={() => moveBlockUp(index)}
                         disabled={index === 0}
-                        class="p-1 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 disabled:opacity-30 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                        class="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 disabled:opacity-30 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
                         title="Geser ke Atas"
                       >
                         <ArrowUp class="w-4 h-4" />
@@ -1041,7 +1141,7 @@
                         type="button"
                         on:click={() => moveBlockDown(index)}
                         disabled={index === blocks.length - 1}
-                        class="p-1 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 disabled:opacity-30 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                        class="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 disabled:opacity-30 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
                         title="Geser ke Bawah"
                       >
                         <ArrowDown class="w-4 h-4" />
@@ -1049,7 +1149,7 @@
                       <button
                         type="button"
                         on:click={() => removeBlock(index)}
-                        class="p-1 ml-2 text-red-500 hover:text-red-700 rounded hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
+                        class="p-1.5 ml-1 text-red-500 hover:text-red-700 rounded hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
                         title="Hapus Blok Ini"
                       >
                         <Trash2 class="w-4 h-4" />
@@ -1073,20 +1173,20 @@
                     <div class="space-y-3">
                       <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">URL Gambar atau Upload File</label>
-                        <div class="flex gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
                           <input
                             type="text"
                             bind:value={block.url}
                             placeholder="https://... atau upload file lokal"
                             class="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-950 text-slate-900 dark:text-white"
                           />
-                          <label class="cursor-pointer px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5 flex-shrink-0">
+                          <label class="cursor-pointer px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5 flex-shrink-0 min-h-[36px]">
                             {#if uploadingBlockId === block.id}
                               <Loader2 class="w-3.5 h-3.5 animate-spin" />
                               <span>Mengunggah...</span>
                             {:else}
                               <Upload class="w-3.5 h-3.5" />
-                              <span>Upload</span>
+                              <span>Upload File</span>
                             {/if}
                             <input
                               type="file"
@@ -1111,7 +1211,7 @@
 
                       {#if block.url}
                         <div class="p-2 bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-lg flex items-center gap-3">
-                          <img src={block.url} alt={block.caption || 'Preview'} class="h-16 w-24 object-cover rounded border dark:border-slate-700" />
+                          <img src={block.url} alt={block.caption || 'Preview'} class="h-14 w-20 object-cover rounded border dark:border-slate-700 flex-shrink-0" />
                           <span class="text-xs text-slate-500 dark:text-slate-400 truncate">{block.caption || block.url}</span>
                         </div>
                       {/if}
@@ -1158,13 +1258,13 @@
         </div>
 
         <!-- Dart Simulation Settings -->
-        <div class="p-4 bg-sky-50/60 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/40 rounded-xl space-y-3">
-          <div class="flex items-center justify-between">
+        <div class="p-3.5 sm:p-4 bg-sky-50/60 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/40 rounded-xl space-y-3">
+          <div class="flex items-center justify-between gap-2">
             <div>
               <span class="text-xs font-bold text-[#0175C2] dark:text-sky-300">Area Simulasi Dart (Interactive DartPad)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">Aktifkan tombol toggle panel DartPad interaktif di sisi kanan</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Aktifkan tombol toggle panel DartPad interaktif</p>
             </div>
-            <label class="relative inline-flex items-center cursor-pointer">
+            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
               <input type="checkbox" bind:checked={lessonForm.enable_dartpad} class="sr-only peer" />
               <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0175C2]"></div>
             </label>
@@ -1187,18 +1287,18 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800 flex-shrink-0">
+      <div class="flex justify-end gap-2 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-800 flex-shrink-0">
         <button 
           type="button"
           on:click={() => showLessonModal = false}
-          class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
+          class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition min-h-[40px] cursor-pointer"
         >
           Batal
         </button>
         <button 
           type="button"
           on:click={saveLesson}
-          class="px-4 py-2 text-xs font-semibold text-white bg-[#0175C2] hover:bg-[#02569B] rounded-lg transition"
+          class="px-4 py-2 text-xs font-semibold text-white bg-[#0175C2] hover:bg-[#02569B] rounded-xl transition min-h-[40px] cursor-pointer"
         >
           Simpan Seluruh Bab & Blok
         </button>
