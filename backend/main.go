@@ -79,6 +79,7 @@ func main() {
 	if stat, err := os.Stat(staticDir); err == nil && stat.IsDir() {
 		log.Println("📦 Menemukan direktori ./static, mengaktifkan static file server & SPA fallback")
 		r.Static("/assets", "./static/assets")
+		r.Static("/decorations", "./static/decorations")
 		r.StaticFile("/favicon.svg", "./static/favicon.svg")
 
 		r.NoRoute(func(c *gin.Context) {
